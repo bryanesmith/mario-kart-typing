@@ -65,7 +65,7 @@
             content: attr(data-icon);
             position: absolute;
             top: 0;
-            left: 0;
+            left: -1000px;
             right: 0;
             bottom: 0;
             font-size: 2em;
@@ -76,7 +76,8 @@
             display: flex;
             flex-wrap: wrap;
             align-content: flex-start;
-            overflow: hidden;
+            overflow: show;
+            transform: rotate(-45deg);
         }
 
         .cup-name {
@@ -538,7 +539,7 @@
             
             // Create tiled background pattern
             let pattern = '';
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 500; i++) {
                 pattern += cup.icon + ' ';
             }
             cupDisplay.setAttribute('data-icon', pattern);
