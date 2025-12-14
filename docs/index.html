@@ -43,23 +43,51 @@
         .cup-display {
             text-align: center;
             margin-bottom: 30px;
-            padding: 20px;
+            padding: 30px 20px;
             background: linear-gradient(135deg, #FFD700, #FFA500);
             border-radius: 15px;
             border: 4px solid #FF8C00;
+            position: relative;
+            overflow: hidden;
+            transition: background 0.5s ease;
+        }
+
+        /* All cups use the same flower cup gradient */
+        .cup-display.mushroom,
+        .cup-display.flower,
+        .cup-display.leaf,
+        .cup-display.star {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-color: #FF8C00;
+        }
+
+        .cup-display::before {
+            content: attr(data-icon);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            font-size: 2em;
+            line-height: 1.5em;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 0;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            overflow: hidden;
         }
 
         .cup-name {
             font-size: 1.5em;
             color: #8B4513;
-            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
         }
 
         .cup-icon {
-            font-size: 3em;
-            margin: 10px 0 0 0;
-            padding-bottom: 0;
-            line-height: 1em;
+            display: none;
         }
 
         .race-track {
@@ -103,7 +131,7 @@
         .mario-racer {
             display: flex;
             align-items: center;
-            transition: margin-left 0.25s linear;
+            transition: margin-left 0.1s linear;
             will-change: transform;
             transform: translateZ(0);
         }
@@ -165,6 +193,8 @@
             transform: translateY(2px);
             box-shadow: 0 2px 0 #15803d;
         }
+
+
 
         .message {
             text-align: center;
@@ -309,10 +339,10 @@
         let raceStartTime = null;
 
         const cups = [
-            { name: 'MUSHROOM CUP', icon: '🍄', required: 20 },
-            { name: 'FLOWER CUP', icon: '🌸', required: 20 },
-            { name: 'LEAF CUP', icon: '🍃', required: 20 },
-            { name: 'STAR CUP', icon: '⭐', required: 20 }
+            { name: 'MUSHROOM CUP', icon: '🍄', required: 20, theme: 'mushroom' },
+            { name: 'FLOWER CUP', icon: '🌸', required: 20, theme: 'flower' },
+            { name: 'LEAF CUP', icon: '🍃', required: 20, theme: 'leaf' },
+            { name: 'STAR CUP', icon: '⭐', required: 20, theme: 'star' }
         ];
 
         function generateNewLetter() {
@@ -436,16 +466,6 @@
             }, 5000);
         }
 
-        function showMessage(text, type) {
-            const message = document.getElementById('message');
-            message.textContent = text;
-            message.className = 'message ' + type;
-            
-            setTimeout(() => {
-                message.style.display = 'none';
-            }, 2000);
-        }
-
         function unlockNextCup() {
             // Stop Bowser's race
             if (bowserInterval) {
@@ -462,9 +482,9 @@
                 const overlay = document.getElementById('cupUnlock');
                 const cup = cups[currentCup];
                 gameStarted = true;
-            	document.getElementById('message').textContent = '';
-            	document.getElementById('targetLetter').style.fontSize = '3em';
-            	document.getElementById('targetLetter').style.lineHeight = '1.5em';
+            document.getElementById('message').textContent = '';
+            document.getElementById('targetLetter').style.fontSize = '3em';
+            document.getElementById('targetLetter').style.lineHeight = '1.5em';
                 document.getElementById('unlockIcon').textContent = cup.icon;
                 document.getElementById('unlockMessage').textContent = `You unlocked the ${cup.name}!`;
                 
@@ -476,20 +496,8 @@
                     updateKeyboardDisplay();
                     updateProgress();
                     
-                    // Reset Mario's position instantly (no animation)
-                    const marioRacer = document.getElementById('marioRacer');
-                    marioRacer.style.transition = 'none';
-                    marioRacer.style.marginLeft = '0';
-                    // Force reflow to apply the instant position change
-                    void marioRacer.offsetHeight;
-                    
-                    // Reset progress bar
-                    updateProgress();
-                    
-                    // Re-enable transition for the next race (will be applied when the race starts)
-                    marioRacer.style.transition = 'margin-left 0.25s linear';
-                    
                     // Reset both racers
+                    document.getElementById('marioRacer').style.marginLeft = '0%';
                     resetBowserRace();
                     startBowserRace();
                     
@@ -517,8 +525,18 @@
 
         function updateCupDisplay() {
             const cup = cups[currentCup];
+            const cupDisplay = document.querySelector('.cup-display');
             document.getElementById('cupName').textContent = cup.name;
-            document.getElementById('cupIcon').textContent = cup.icon;
+            
+            // Update theme class
+            cupDisplay.className = 'cup-display ' + cup.theme;
+            
+            // Create tiled background pattern
+            let pattern = '';
+            for (let i = 0; i < 50; i++) {
+                pattern += cup.icon + ' ';
+            }
+            cupDisplay.setAttribute('data-icon', pattern);
         }
 
         document.addEventListener('keydown', (e) => {
@@ -542,19 +560,6 @@
             if (key === currentLetter) {
                 correctCount++;
                 cupProgress++;
-                
-                // Uncomment for Mario to bounce while moving
-                /*
-                document.getElementById('marioRacer').classList.add('bounce');
-                setTimeout(() => {
-                    document.getElementById('marioRacer').classList.remove('bounce');
-                }, 500);
-                */
-                
-                // Uncomment this for jittery/annoying "Go" message
-                /* 
-                showMessage('GO! GO! GO! 🏁', 'success');
-                */
                 
                 updateProgress();
                 moveRacer();
