@@ -131,7 +131,7 @@
         .mario-racer {
             display: flex;
             align-items: center;
-            transition: margin-left 0.1s linear;
+            transition: margin-left 0.4s linear;
             will-change: transform;
             transform: translateZ(0);
         }
@@ -482,9 +482,9 @@
                 const overlay = document.getElementById('cupUnlock');
                 const cup = cups[currentCup];
                 gameStarted = true;
-            document.getElementById('message').textContent = '';
-            document.getElementById('targetLetter').style.fontSize = '3em';
-            document.getElementById('targetLetter').style.lineHeight = '1.5em';
+                document.getElementById('message').textContent = '';
+                document.getElementById('targetLetter').style.fontSize = '3em';
+                document.getElementById('targetLetter').style.lineHeight = '1.5em';
                 document.getElementById('unlockIcon').textContent = cup.icon;
                 document.getElementById('unlockMessage').textContent = `You unlocked the ${cup.name}!`;
                 
@@ -496,8 +496,13 @@
                     updateKeyboardDisplay();
                     updateProgress();
                     
-                    // Reset both racers
-                    document.getElementById('marioRacer').style.marginLeft = '0%';
+                    // Reset Mario racer
+                    const marioRacer = document.getElementById('marioRacer');
+                    marioRacer.style.transition = 'none';
+                    marioRacer.style.marginLeft = '0%';
+                    // Force reflow to apply the instant position change
+                    void marioRacer.offsetHeight;
+                    marioRacer.style.transition = 'margin-left 0.4s linear';
                     resetBowserRace();
                     startBowserRace();
                     
