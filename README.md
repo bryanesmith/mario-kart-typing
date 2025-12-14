@@ -3,4 +3,4 @@ Learn Typing with Mario Kart! **[Play now!](https://bryanesmith.github.io/mario-
 
 ![Screenshot](mario-kart-typing-race.png)
 
-Built with **Claude Sonnet 4.5** and **Cascade SWE-1**.
+Built with **Claude Sonnet 4.5** and **Cascade SWE-1**. 
