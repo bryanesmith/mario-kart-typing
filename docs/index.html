@@ -316,7 +316,16 @@
         ];
 
         function generateNewLetter() {
-            currentLetter = targetLetters[Math.floor(Math.random() * targetLetters.length)];
+            // Create a copy of the target letters
+            let availableLetters = [...targetLetters];
+            
+            // Remove the current letter if it exists
+            if (currentLetter) {
+                availableLetters = availableLetters.filter(letter => letter !== currentLetter);
+            }
+            
+            // Select a random letter from the remaining ones
+            currentLetter = availableLetters[Math.floor(Math.random() * availableLetters.length)];
             document.getElementById('targetLetter').textContent = currentLetter.toUpperCase();
             
             // Highlight the key
